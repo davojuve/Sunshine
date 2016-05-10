@@ -1,9 +1,11 @@
 package am.wedo.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +27,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import am.wedo.sunshine.jsonParser.WeatherDataParser;
@@ -47,6 +48,12 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         inflater.inflate(R.menu.menu_forecast_fragment, menu);
@@ -59,14 +66,33 @@ public class ForecastFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("616051");
+            updateWeather();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+
+        // read string from sharedPreferences and we get value stored for pref_location_key
+        // if there is no value stored then we fall back to the default location
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        String location = prefs.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default)
+        );
+
+        String units = prefs.getString(
+                getString(R.string.pref_units_key),
+                getString(R.string.pref_units_default)
+        );
+
+        weatherTask.execute(location, units);
     }
 
     @Override
@@ -74,17 +100,7 @@ public class ForecastFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // dummy text for listView
-        String[] forecastArray = {
-                "Today-Mostly Cloudy-22/7",
-                "Tomorrow-Foggy-22/7",
-                "Weds-Sunny-25/8",
-                "Thurs-Rainy-18/9",
-                "Fri-Foggy-25/8",
-                "Sat-Sunny-32/10"
-        };
-
-        List<String> weekForecast = new ArrayList<>(Arrays.asList(forecastArray));
+        List<String> weekForecast = new ArrayList<>();
 
         // Create an ArrayAdapter
          mForecastAdapter = new ArrayAdapter<String>(
@@ -140,7 +156,7 @@ public class ForecastFragment extends Fragment {
 
             try {
                 // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
+                // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("http")
