@@ -1,5 +1,6 @@
 package am.wedo.sunshine;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,8 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +35,7 @@ import am.wedo.sunshine.jsonParser.WeatherDataParser;
  */
 public class ForecastFragment extends Fragment {
 
+    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -82,7 +87,7 @@ public class ForecastFragment extends Fragment {
         List<String> weekForecast = new ArrayList<>(Arrays.asList(forecastArray));
 
         // Create an ArrayAdapter
-        ArrayAdapter<String> mForceastAdapter = new ArrayAdapter<String>(
+         mForecastAdapter = new ArrayAdapter<String>(
                 // current activity of the fragment
                 getActivity(),
                 // id of list item layout
@@ -96,20 +101,31 @@ public class ForecastFragment extends Fragment {
         // Find ListView
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         // set adapter on listView
-        listView.setAdapter(mForceastAdapter);
+        listView.setAdapter(mForecastAdapter);
 
+        // on item click listener
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
-
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String forecast = mForecastAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
 
-    public class FetchWeatherTask extends AsyncTask<String,Void,Void> {
+    /**
+     * class FetchWeatherTask for fetching data from webServer
+     */
+    public class FetchWeatherTask extends AsyncTask<String,Void,String[]> {
 
         public final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected String[] doInBackground(String... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -119,6 +135,7 @@ public class ForecastFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String forecastJsonStr = null;
             String units = "metric";
+            String[] results = null;
             int numDays = 7;
 
             try {
@@ -131,7 +148,7 @@ public class ForecastFragment extends Fragment {
                         .appendPath("data")
                         .appendPath("2.5")
                         .appendPath("forecast")
-                        .appendPath("city")
+                        .appendPath("daily")
                         .appendQueryParameter("id", params[0])
                         .appendQueryParameter("APPID", "15166a61ffa7409e7b2b6786bd575ba0")
                         .appendQueryParameter("units", units)
@@ -171,7 +188,12 @@ public class ForecastFragment extends Fragment {
 
                 if(forecastJsonStr != null){
                     WeatherDataParser weatherDataParser = new WeatherDataParser();
-                    weatherDataParser.
+                    try {
+                        results = weatherDataParser.getWeatherDataFromJson(forecastJsonStr,numDays);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
 
 
@@ -192,8 +214,18 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
-            return null;
+
+            return results;
         }
 
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mForecastAdapter.clear();
+                for(String dayForecastStr : result){
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
+        }
     }
 }

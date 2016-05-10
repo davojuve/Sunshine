@@ -3,7 +3,6 @@ package am.wedo.sunshine.jsonParser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,7 +40,7 @@ public class WeatherDataParser {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+    public String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
@@ -76,8 +75,8 @@ public class WeatherDataParser {
             JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
             description = weatherObject.getString(OWM_DESCRIPTION);
 
-            // Temperatures are in a child object called "temp".  Try not to name variables
-            // "temp" when working with temperature.  It confuses everybody.
+            // Temperatures are in a child object called "main".  Try not to name variables
+            // "main" when working with temperature.  It confuses everybody.
             JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
             double high = temperatureObject.getDouble(OWM_MAX);
             double low = temperatureObject.getDouble(OWM_MIN);
