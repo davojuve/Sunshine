@@ -14,12 +14,12 @@
 
     <ListPreference
         android:capitalize="words"
-        android:key="pref_unit"
+        android:key="@string/pref_units_key"
         android:title="@string/pref_units_label"
         android:dialogTitle="@string/pref_units_dialog_label"
-        android:entries="@array/pref_unit_entries"
-        android:entryValues="@array/pref_unit_values"
-        android:defaultValue="@string/pref_units_default" />
+        android:entries="@array/pref_units_entries"
+        android:entryValues="@array/pref_units_values"
+        android:defaultValue="@string/pref_units_metric" />
 
 
 </PreferenceScreen>

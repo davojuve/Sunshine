@@ -17,9 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import org.json.JSONException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import am.wedo.sunshine.jsonParser.WeatherDataParser;
 
 /**
@@ -37,6 +34,7 @@ import am.wedo.sunshine.jsonParser.WeatherDataParser;
 public class ForecastFragment extends Fragment {
 
     private ArrayAdapter<String> mForecastAdapter;
+    public final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     public ForecastFragment() {
     }
@@ -87,12 +85,7 @@ public class ForecastFragment extends Fragment {
                 getString(R.string.pref_location_default)
         );
 
-        String units = prefs.getString(
-                getString(R.string.pref_units_key),
-                getString(R.string.pref_units_default)
-        );
-
-        weatherTask.execute(location, units);
+        weatherTask.execute(location);
     }
 
     @Override
@@ -138,7 +131,7 @@ public class ForecastFragment extends Fragment {
      */
     public class FetchWeatherTask extends AsyncTask<String,Void,String[]> {
 
-        public final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+
 
         @Override
         protected String[] doInBackground(String... params) {
@@ -171,9 +164,9 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter("cnt", String.valueOf(numDays));
                 String myUrl = builder.build().toString();
 
-//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/city?id=616051&APPID=15166a61ffa7409e7b2b6786bd575ba0&units=metric&cnt=7");
+//                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?id=616051&APPID=15166a61ffa7409e7b2b6786bd575ba0&units=metric&cnt=7");
                 URL url = new URL(myUrl);
-                Log.e(LOG_TAG, myUrl);
+//                Log.e(LOG_TAG, myUrl);
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -205,7 +198,7 @@ public class ForecastFragment extends Fragment {
                 if(forecastJsonStr != null){
                     WeatherDataParser weatherDataParser = new WeatherDataParser();
                     try {
-                        results = weatherDataParser.getWeatherDataFromJson(forecastJsonStr,numDays);
+                        results = weatherDataParser.getWeatherDataFromJson(forecastJsonStr,numDays, getActivity());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

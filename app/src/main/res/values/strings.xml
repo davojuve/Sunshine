@@ -17,14 +17,18 @@
     <!-- Default city code for location preference -->
     <string name="pref_location_default" translatable="false">616051</string>
 
+
     <!-- Label for the units preference [CHAR LIMIT=30]-->
     <string name="pref_units_label">Temperature Unit</string>
     <!-- dialogTitle -->
     <string name="pref_units_dialog_label">PICK YOUR UNIT</string>
     <!-- Key name for storing location in SharedPreference -->
-    <string name="pref_units_key" translatable="false">unit</string>
+    <string name="pref_units_key" translatable="false">units</string>
     <!-- Default city code for location preference -->
-    <string name="pref_units_default" translatable="false">"metric"</string>
+    <string name="pref_units_metric" translatable="false">metric</string>
+
+    <string name="pref_units_imperial" translatable="false">imperial</string>
+
 
 
 
