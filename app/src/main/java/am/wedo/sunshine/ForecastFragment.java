@@ -158,7 +158,8 @@ public class ForecastFragment extends Fragment {
                         .appendPath("2.5")
                         .appendPath("forecast")
                         .appendPath("daily")
-                        .appendQueryParameter("id", params[0])
+//                        .appendQueryParameter("id", params[0])
+                        .appendQueryParameter("q", params[0])
                         .appendQueryParameter("APPID", "15166a61ffa7409e7b2b6786bd575ba0")
                         .appendQueryParameter("units", units)
                         .appendQueryParameter("cnt", String.valueOf(numDays));
