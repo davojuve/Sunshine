@@ -199,7 +199,7 @@ public class ForecastFragment extends Fragment {
                 if(forecastJsonStr != null){
                     WeatherDataParser weatherDataParser = new WeatherDataParser();
                     try {
-                        results = weatherDataParser.getWeatherDataFromJson(forecastJsonStr,numDays, getActivity());
+                        results = weatherDataParser.getWeatherDataFromJson(forecastJsonStr, numDays, getActivity());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

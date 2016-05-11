@@ -6,9 +6,5 @@
         android:fragment="am.wedo.sunshine.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_location" />
-    <header
-        android:fragment="am.wedo.sunshine.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_wb_sunny_black_24dp"
-        android:title="@string/pref_header_temperature" />
 
 </preference-headers>

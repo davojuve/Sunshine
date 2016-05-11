@@ -12,6 +12,7 @@ import android.widget.TextView;
  * A placeholder fragment containing a simple view.
  */
 public class DetailActivityFragment extends Fragment {
+    public static String mForecastStr;
 
     public DetailActivityFragment() {
     }
@@ -26,8 +27,8 @@ public class DetailActivityFragment extends Fragment {
 
 
         if (intent!= null && intent.getExtras() != null) {
-            String forecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ((TextView) rootView.findViewById(R.id.detail_text)).setText(forecastStr);
+            mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+            ((TextView) rootView.findViewById(R.id.detail_text)).setText(mForecastStr);
         }
 
         return rootView;
