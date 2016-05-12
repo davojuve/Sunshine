@@ -23,6 +23,16 @@ public class DetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        // This is where I want to change the menu. Can be anywhere in your activity.
+        invalidateOptionsMenu();
+    }
+
+    // Override this method to do what you want when the menu is recreated
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_mail).setVisible(false);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
