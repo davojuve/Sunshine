@@ -25,7 +25,7 @@
             android:name=".DetailActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -34,6 +34,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="am.wedo.sunshine.MainActivity" />
         </activity>
+        <provider
+            android:authorities="am.wedo.sunshine"
+            android:name=".data.WeatherProvider" />
     </application>
 
 </manifest>

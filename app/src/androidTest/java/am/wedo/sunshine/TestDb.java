@@ -16,11 +16,11 @@ import am.wedo.sunshine.data.WeatherDbHelper;
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class TestDb extends ApplicationTestCase<Application> {
 
     static public String TEST_CITY_NAME = "North Pole";
 
-    public ApplicationTest() {
+    public TestDb() {
         super(Application.class);
     }
 

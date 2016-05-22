@@ -12,7 +12,7 @@ import java.net.URI;
  */
 public class WeatherContract {
 
-    public static final String CONTENT_AUTHORITY = "am.wedo.sunshine.app";
+    public static final String CONTENT_AUTHORITY = "am.wedo.sunshine";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     // possible paths
@@ -42,6 +42,11 @@ public class WeatherContract {
         // map intent, we store the latitude and longitude as returned by openweathermap
         public static final String COLUMN_COORD_LAT = "coord_lat";
         public static final String COLUMN_COORD_LONG = "coord_long";
+
+        public static Uri buildLocationUri(Long _id){
+            return ContentUris.withAppendedId(CONTENT_URI, _id);
+        }
+
     }
 
     /** Inner class that defines the table content of the weather table */
