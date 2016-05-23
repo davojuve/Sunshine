@@ -46,11 +46,14 @@ public class TestProvider extends ApplicationTestCase<Application> {
         // vnd.android.cursor.dir/am.wedo.sunshine/weather
         assertEquals(WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE, type);
 
-        // TODO: 22-May-16 stex em 
         // content://am.wedo.sunshine/location
         type = mContext.getContentResolver().getType(WeatherContract.LocationEntry.CONTENT_URI);
         // vnd.android.cursor.dir/am.wedo.sunshine/location
-        assertEquals(WeatherContract.WeatherEntry.CONTENT_TYPE, type);
+        assertEquals(WeatherContract.LocationEntry.CONTENT_TYPE, type);
+
+        // content://am.wedo.sunshine/location/1
+        type = mContext.getContentResolver().getType(WeatherContract.LocationEntry.buildLocationUri(1L));
+        assertEquals(WeatherContract.LocationEntry.CONTENT_ITEM_TYPE, type);
     }
 
     public void testInsertReadDb(){
@@ -67,15 +70,6 @@ public class TestProvider extends ApplicationTestCase<Application> {
         // verify we got a row back.
         assertTrue(locationRowId != -1);
         Log.d("test", "New row id: " + locationRowId);
-
-        // Specify which columns you want
-//        String[] columns = {
-//                WeatherContract.LocationEntry._ID,
-//                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
-//                WeatherContract.LocationEntry.COLUMN_CITY_NAME,
-//                WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-//                WeatherContract.LocationEntry.COLUMN_COORD_LONG
-//        };
 
         // A cursor is your primary interface to the query results
         Cursor cursor = db.query(
@@ -116,7 +110,6 @@ public class TestProvider extends ApplicationTestCase<Application> {
         }else{
             fail("No values returned :(");
         }
-
 
     }
 
@@ -159,6 +152,5 @@ public class TestProvider extends ApplicationTestCase<Application> {
         values.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, testLongitude);
         return values;
     }
-
 
 }

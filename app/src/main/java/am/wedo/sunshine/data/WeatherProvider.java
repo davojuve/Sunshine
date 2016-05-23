@@ -60,6 +60,10 @@ public class WeatherProvider extends ContentProvider {
                 return WeatherContract.WeatherEntry.CONTENT_TYPE;
             case WEATHER:
                 return WeatherContract.WeatherEntry.CONTENT_TYPE;
+            case LOCATION:
+                return WeatherContract.WeatherEntry.CONTENT_TYPE;
+            case LOCATION_ID:
+                return WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
