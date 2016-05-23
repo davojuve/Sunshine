@@ -56,7 +56,7 @@ public class TestProvider extends ApplicationTestCase<Application> {
         assertEquals(WeatherContract.LocationEntry.CONTENT_ITEM_TYPE, type);
     }
 
-    public void testInsertReadDb(){
+    public void testInsertReadProvider(){
         // test data insert to db
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -69,18 +69,14 @@ public class TestProvider extends ApplicationTestCase<Application> {
 
         // verify we got a row back.
         assertTrue(locationRowId != -1);
-        Log.d("test", "New row id: " + locationRowId);
 
         // A cursor is your primary interface to the query results
-        Cursor cursor = db.query(
-                    WeatherContract.LocationEntry.TABLE_NAME,
-                    null, // columns
-                    null, // WHERE
-                    null, // values for WHERE
-                    null, // group by
-                    null, // filter by
-                    null  // sort order
-                );
+        Cursor cursor = mContext.getContentResolver().query(WeatherContract.LocationEntry.buildLocationUri(locationRowId),
+                                                                    null,
+                                                                    null, // WHERE
+                                                                    null, // values for WHERE
+                                                                    null  // sort order
+                                                            );
 
         if(cursor.moveToFirst()){
            validateCursor(values, cursor);
@@ -91,15 +87,12 @@ public class TestProvider extends ApplicationTestCase<Application> {
             weatherRowId = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, weatherValues);
             assertTrue(weatherRowId != -1);
 
-            Cursor weatherCursor = db.query(
-                    WeatherContract.WeatherEntry.TABLE_NAME,
-                    null, // just returns all columns
-                    null, // WHERE
-                    null, // values for WHERE
-                    null, // group by
-                    null, // filter by
-                    null  // sort order
-            );
+            Cursor weatherCursor = mContext.getContentResolver().query(WeatherContract.WeatherEntry.CONTENT_URI,
+                                                                            null, // columns
+                                                                            null, // WHERE
+                                                                            null, // values for WHERE
+                                                                            null  // sort order
+                                                                        );
 
             if(weatherCursor.moveToFirst()) {
                 validateCursor(weatherValues, weatherCursor);

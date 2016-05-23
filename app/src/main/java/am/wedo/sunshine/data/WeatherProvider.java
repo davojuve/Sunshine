@@ -1,9 +1,12 @@
 package am.wedo.sunshine.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
@@ -19,6 +22,18 @@ public class WeatherProvider extends ContentProvider {
     public static final int LOCATION_ID = 301;
 
     private WeatherDbHelper mOpenHelper;
+    private static final SQLiteQueryBuilder sWeatherByLocationSettingQueryBuilder;
+    static {
+        sWeatherByLocationSettingQueryBuilder = new SQLiteQueryBuilder();
+        sWeatherByLocationSettingQueryBuilder.setTables(
+                WeatherContract.WeatherEntry.TABLE_NAME + "INNER JOIN " +
+                        WeatherContract.LocationEntry.TABLE_NAME +
+                        " ON" + WeatherContract.WeatherEntry.TABLE_NAME +
+                        "." + WeatherContract.WeatherEntry.COLUMN_LOC_KEY +
+                        " = " + WeatherContract.LocationEntry.TABLE_NAME +
+                        "." + WeatherContract.LocationEntry._ID );
+    }
+
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
@@ -45,7 +60,64 @@ public class WeatherProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+        Cursor retCursor;
+        switch (sUriMatcher.match(uri)){
+            // weather/*/*
+            case WEATHER_WITH_LOCATION_AND_DATE:{
+                retCursor = null;
+                break;
+            }
+            // weather/*
+            case WEATHER_WITH_LOCATION:{
+                retCursor = null;
+                break;
+            }
+            // weather/*
+            case WEATHER:{
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.WeatherEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            // location/*
+            case LOCATION_ID:{
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.LocationEntry.TABLE_NAME,
+                        projection,
+                        WeatherContract.LocationEntry._ID + "= ?",
+                        new String[] {String.valueOf(ContentUris.parseId(uri))},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            // location
+            case LOCATION:{
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.LocationEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri" + uri);
+        }
+        if (retCursor != null && getContext() != null) {
+            retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
+        return retCursor;
     }
 
     @Nullable
