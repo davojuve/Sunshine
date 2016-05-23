@@ -4,8 +4,6 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import java.net.URI;
-
 
 /**
  * Created by Davit: Store Database columns

@@ -20,7 +20,7 @@ public class WeatherProvider extends ContentProvider {
 
     private WeatherDbHelper mOpenHelper;
 
-    private static final UriMatcher sUriMstcher = buildUriMatcher();
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     private static UriMatcher buildUriMatcher(){
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -51,7 +51,7 @@ public class WeatherProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(Uri uri) {
-        final int match = sUriMstcher.match(uri);
+        final int match = sUriMatcher.match(uri);
 
         switch (match){
             case WEATHER_WITH_LOCATION_AND_DATE:
@@ -61,9 +61,9 @@ public class WeatherProvider extends ContentProvider {
             case WEATHER:
                 return WeatherContract.WeatherEntry.CONTENT_TYPE;
             case LOCATION:
-                return WeatherContract.WeatherEntry.CONTENT_TYPE;
+                return WeatherContract.LocationEntry.CONTENT_TYPE;
             case LOCATION_ID:
-                return WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE;
+                return WeatherContract.LocationEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: " + uri);
         }
