@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
-import android.util.Log;
 
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +18,9 @@ import am.wedo.sunshine.data.WeatherDbHelper;
 public class TestProvider extends ApplicationTestCase<Application> {
 
     static public String TEST_CITY_NAME = "North Pole";
+    static public String TEST_LOCATION = "94074";
+    static public String TEST_DATE = "20140612";
+
 
     public TestProvider() {
         super(Application.class);
@@ -34,15 +36,14 @@ public class TestProvider extends ApplicationTestCase<Application> {
         // vnd.android.cursor.dir/am.wedo.sunshine/weather
         assertEquals(WeatherContract.WeatherEntry.CONTENT_TYPE, type);
 
-        String testLocation = "94074";
+
         // content://am.wedo.sunshine/weather/94074
-        type = mContext.getContentResolver().getType(WeatherContract.WeatherEntry.buildWeatherLocation(testLocation));
+        type = mContext.getContentResolver().getType(WeatherContract.WeatherEntry.buildWeatherLocation(TEST_LOCATION));
         // vnd.android.cursor.dir/am.wedo.sunshine/weather
         assertEquals(WeatherContract.WeatherEntry.CONTENT_TYPE, type);
 
-        String testDate = "20140612";
         // content://am.wedo.sunshine/weather/94074/20140612
-        type = mContext.getContentResolver().getType(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(testLocation, testDate));
+        type = mContext.getContentResolver().getType(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(TEST_LOCATION, TEST_DATE));
         // vnd.android.cursor.dir/am.wedo.sunshine/weather
         assertEquals(WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE, type);
 
@@ -82,23 +83,38 @@ public class TestProvider extends ApplicationTestCase<Application> {
            validateCursor(values, cursor);
 
             ContentValues weatherValues = getWeatherContentValues(locationRowId);
-
             long weatherRowId;
             weatherRowId = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, weatherValues);
             assertTrue(weatherRowId != -1);
 
-            Cursor weatherCursor = mContext.getContentResolver().query(WeatherContract.WeatherEntry.CONTENT_URI,
-                                                                            null, // columns
-                                                                            null, // WHERE
-                                                                            null, // values for WHERE
-                                                                            null  // sort order
-                                                                        );
+//            Cursor weatherCursor = mContext.getContentResolver().query(WeatherContract.WeatherEntry.CONTENT_URI,
+//                                                                            null, // columns
+//                                                                            null, // WHERE
+//                                                                            null, // values for WHERE
+//                                                                            null  // sort order
+//                                                                        );
+//
+//            if(weatherCursor.moveToFirst()) {
+//                validateCursor(weatherValues, weatherCursor);
+//            }else{
+//                fail("No weather data returned!");
+//            }
+//
+//            weatherCursor.close();
+
+            Cursor weatherCursor = mContext.getContentResolver().query(WeatherContract.WeatherEntry.buildWeatherLocation(TEST_LOCATION),
+                    null, // columns
+                    null, // WHERE
+                    null, // values for WHERE
+                    null  // sort order
+            );
 
             if(weatherCursor.moveToFirst()) {
                 validateCursor(weatherValues, weatherCursor);
             }else{
                 fail("No weather data returned!");
             }
+
 
         }else{
             fail("No values returned :(");

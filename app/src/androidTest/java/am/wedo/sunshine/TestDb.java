@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.ApplicationTestCase;
-import android.util.Log;
 
 import java.util.Map;
 import java.util.Set;
@@ -48,16 +47,7 @@ public class TestDb extends ApplicationTestCase<Application> {
 
         // verify we got a row back.
         assertTrue(locationRowId != -1);
-        Log.d("test", "New row id: " + locationRowId);
 
-        // Specify which columns you want
-//        String[] columns = {
-//                WeatherContract.LocationEntry._ID,
-//                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
-//                WeatherContract.LocationEntry.COLUMN_CITY_NAME,
-//                WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-//                WeatherContract.LocationEntry.COLUMN_COORD_LONG
-//        };
 
         // A cursor is your primary interface to the query results
         Cursor cursor = db.query(
