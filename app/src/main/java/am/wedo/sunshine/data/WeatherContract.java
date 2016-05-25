@@ -1,8 +1,13 @@
 package am.wedo.sunshine.data;
 
 import android.content.ContentUris;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -17,6 +22,7 @@ public class WeatherContract {
     public static final String PATH_WEATHER = "weather";
     public static final String PATH_LOCATION = "location";
 
+    private static final String DATE_FORMAT = "yyyyMMdd";
 
     /** Inner class that defines the table content of the location table */
     public static final class LocationEntry implements BaseColumns {
@@ -44,7 +50,6 @@ public class WeatherContract {
         public static Uri buildLocationUri(Long _id){
             return ContentUris.withAppendedId(CONTENT_URI, _id);
         }
-
     }
 
     /** Inner class that defines the table content of the weather table */
@@ -85,6 +90,8 @@ public class WeatherContract {
         // Degrees are meteorological degrees (e.g, 0 is north, 180 is south). Stored as a float
         public static final String COLUMN_DEGREES = "degrees";
 
+
+
         public static Uri buildWeatherUri(Long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -113,6 +120,13 @@ public class WeatherContract {
         public static String getStartDateFromUri(Uri uri){
             return uri.getQueryParameter(COLUMN_DATETEXT);
         }
+
+
+    }
+
+    public static String getDbDateString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        return sdf.format(date);
     }
 
 }

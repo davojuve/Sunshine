@@ -81,7 +81,7 @@ public class WeatherDataParser {
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
-        String[] resultStrs = new String[numDays];
+        String[] resultStr = new String[numDays];
         for(int i = 0; i < weatherArray.length(); i++) {
             // For now, using the format "Day, description, hi/low"
             String day;
@@ -108,9 +108,9 @@ public class WeatherDataParser {
             double low = temperatureObject.getDouble(OWM_MIN);
 
             highAndLow = formatHighLows(high, low, context);
-            resultStrs[i] = day + " - " + description + " - " + highAndLow;
+            resultStr[i] = day + " - " + description + " - " + highAndLow;
         }
 
-        return resultStrs;
+        return resultStr;
     }
 }

@@ -242,11 +242,12 @@ public class TestProvider extends ApplicationTestCase<Application> {
                 null
         );
 
-        if(cursor.moveToFirst()){
-            validateCursor(values2, cursor);
+        if (cursor != null) {
+            if(cursor.moveToFirst()){
+                validateCursor(values2, cursor);
+            }
+            cursor.close();
         }
-        cursor.close();
+
     }
-
-
 }
