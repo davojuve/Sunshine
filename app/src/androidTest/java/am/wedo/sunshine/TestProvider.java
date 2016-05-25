@@ -7,13 +7,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.ApplicationTestCase;
+import android.util.Log;
 
 import java.util.Map;
 import java.util.Set;
 
 import am.wedo.sunshine.data.WeatherContract;
 import am.wedo.sunshine.data.WeatherDbHelper;
-import am.wedo.sunshine.data.WeatherProvider;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -79,6 +79,7 @@ public class TestProvider extends ApplicationTestCase<Application> {
         type = mContext.getContentResolver().getType(WeatherContract.LocationEntry.buildLocationUri(1L));
         assertEquals(WeatherContract.LocationEntry.CONTENT_ITEM_TYPE, type);
     }
+
 
     public void testInsertReadProvider(){
         // test data insert to db
@@ -164,6 +165,7 @@ public class TestProvider extends ApplicationTestCase<Application> {
             fail("No values returned :(");
         }
 
+        testDeleteAllRecords();
     }
 
     private ContentValues getWeatherContentValues(long locationRowId) {
@@ -203,7 +205,48 @@ public class TestProvider extends ApplicationTestCase<Application> {
         values.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, testLocationSetting);
         values.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, testLatitude);
         values.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, testLongitude);
+
         return values;
     }
+
+    public void testUpdateLocation(){
+        testDeleteAllRecords();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = getLocationContentValues();
+
+        Uri locationUri = mContext.getContentResolver().insert(WeatherContract.LocationEntry.CONTENT_URI, values);
+        long locationRowId = ContentUris.parseId(locationUri);
+
+        // verify we got row back
+        assertTrue(locationRowId != -1);
+        Log.d("test", "locationRowId: " + locationRowId);
+
+        ContentValues values2 = new ContentValues(values);
+        values2.put(WeatherContract.LocationEntry._ID, locationRowId);
+        values2.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, "Yerevan");
+
+        int count = mContext.getContentResolver().update(WeatherContract.LocationEntry.CONTENT_URI,
+                                                            values2,
+                                                            WeatherContract.LocationEntry._ID + " = ? ",
+                                                            new String[]{String.valueOf(locationRowId)}
+        );
+
+        assertEquals(count, 1);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                WeatherContract.LocationEntry.buildLocationUri(locationRowId),
+                null,
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst()){
+            validateCursor(values2, cursor);
+        }
+        cursor.close();
+    }
+
 
 }

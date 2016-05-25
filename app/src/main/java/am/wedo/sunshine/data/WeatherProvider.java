@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
@@ -272,5 +271,36 @@ public class WeatherProvider extends ContentProvider {
         }
 
         return rowsUpdated;
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int returnCount = 0;
+
+        switch ( match ){
+            case WEATHER:{
+                db.beginTransaction();
+
+                try{
+                    for(ContentValues contentValues : values){
+                        Long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, contentValues);
+                        if (-1 != _id){
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri,null);
+                return returnCount;
+            }
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 }
